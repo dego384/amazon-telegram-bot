@@ -66,17 +66,20 @@ def post_deals():
     message += f"#amazon #deals #shopping"
     try:
         bot.send_message(chat_id=CHAT_ID, text=message, parse_mode="Markdown")
-        print(f"✅ {len(deals)} Deals gepostet")
+        print(f"✅ {len(deals)} Deals gepostet um {datetime.now()}")
     except Exception as e:
         print(f"❌ Fehler beim Posten: {e}")
 
 scheduler = BackgroundScheduler(timezone='Europe/Berlin')
-scheduler.add_job(post_deals, 'cron', hour=9, minute=0)
-scheduler.add_job(post_deals, 'cron', hour=15, minute=0)
+
+# POSTET ALLE 15 MINUTEN!!!
+scheduler.add_job(post_deals, 'interval', minutes=15)
+
 scheduler.start()
 
-print("✅ Amazon Bot auf Railway läuft!")
-print("Nächster Scrape um 09:00 Uhr")
+print("✅ Amazon Bot läuft!")
+print("📤 Postet ALLE 15 MINUTEN")
+print(f"Nächster Post um {(datetime.now().minute // 15 + 1) * 15 % 60:02d}:{datetime.now().strftime('%M')}")
 
 try:
     while True:
